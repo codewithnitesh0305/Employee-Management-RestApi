@@ -6,11 +6,11 @@ The Employee Management System will allow users to perform CRUD (Create, Read, U
 The application will expose RESTful endpoints to interact with the employee data stored in an H2 in-memory database.
 
 Technologies Used
-  Spring Boot: Simplifies the setup and development of the Spring application.
-  Spring MVC: Facilitates the creation of web applications and RESTful services.
-  Spring Data JPA: Provides a simplified data access layer to interact with databases.
-  H2 Database: An in-memory database for testing and development purposes.
-  REST API: Exposes endpoints for CRUD operations.
+  Spring Boot: Simplifies the setup and development of the Spring application.<br>
+  Spring MVC: Facilitates the creation of web applications and RESTful services.<br>
+  Spring Data JPA: Provides a simplified data access layer to interact with databases.<br>
+  H2 Database: An in-memory database for testing and development purposes.<br>
+  REST API: Exposes endpoints for CRUD operations.<br>
 Project Structure
   Entity Class: Represents the Employee entity.
   Repository Interface: Extends Spring Data JPA to provide CRUD operations.
