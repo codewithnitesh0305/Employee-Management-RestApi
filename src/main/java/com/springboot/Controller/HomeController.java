@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +13,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.springboot.CustomeException.BusinessException;
+import com.springboot.CustomeException.ControllerException;
 import com.springboot.Entity.Employee;
 import com.springboot.Service.EmployeeServiceImp;
 
@@ -32,9 +32,18 @@ public class HomeController {
 	
 	 //Insert Single Employee Data
 	 @PostMapping("/employees")
-	 public ResponseEntity<Employee> addEmployee(@RequestBody Employee employee){ 
-		Employee addEmployee = employeeServiceImp.saveEmployee(employee); return new
-		ResponseEntity<Employee>(addEmployee,HttpStatus.CREATED); 
+	 public ResponseEntity<?> addEmployee(@RequestBody Employee employee){ 
+		 try {
+			 Employee addEmployee = employeeServiceImp.saveEmployee(employee); 
+			return new ResponseEntity<Employee>(addEmployee,HttpStatus.CREATED); 
+		 }catch(BusinessException e) {
+			ControllerException controllerException = new ControllerException(e.getStatusCode(),e.getStatusMessage()) ;
+			return new ResponseEntity<ControllerException>(controllerException, HttpStatus.BAD_REQUEST);
+		 }catch(Exception e) {
+			 ControllerException controllerException = new ControllerException("611","Something went wrong in controller") ;
+			return new ResponseEntity<ControllerException>(controllerException, HttpStatus.BAD_REQUEST);
+		 }
+		
 	 }
 	 
 	//Insert Bulk Employee Data 
@@ -57,9 +66,17 @@ public class HomeController {
 	
 	//Retrieve Employee Data By Id
 	@GetMapping("/employees/{id}")
-	public ResponseEntity<Employee> getEmployeeById(@PathVariable int id){
+	public ResponseEntity<?> getEmployeeById(@PathVariable int id){
+		try {
 		Employee employee = employeeServiceImp.getEmployeeById(id);
 		return new ResponseEntity<Employee>(employee,HttpStatus.FOUND);
+		}catch(BusinessException e) {
+			 ControllerException controllerException = new ControllerException(e.getStatusCode(),e.getStatusMessage()) ;
+			return new ResponseEntity<ControllerException>(controllerException, HttpStatus.BAD_REQUEST);
+		}catch(Exception e) {
+			 ControllerException controllerException = new ControllerException("612","Something went wrong in controller") ;
+			return new ResponseEntity<ControllerException>(controllerException, HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	//Update Employee Details By Id

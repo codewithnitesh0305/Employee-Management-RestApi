@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.springboot.CustomeException.BusinessException;
 import com.springboot.Entity.Employee;
 import com.springboot.Exception.EmployeeNotFountException;
 import com.springboot.Repository.EmployeeRepository;
@@ -18,8 +19,19 @@ public class EmployeeServiceImp implements EmployeeService{
 	
 	@Override
 	public Employee saveEmployee(Employee employee) {
-		// TODO Auto-generated method stub
-		return employeeRepository.save(employee);
+		
+			if(employee.getName().isEmpty() || employee.getName().length() == 0 || employee.getAge().isEmpty() || employee.getAge().length() == 0 ||  employee.getCity().length() == 0 || employee.getCity().isEmpty() ) {
+				throw new BusinessException("601", "Input field is empty");
+			}
+		try {
+			Employee saveEmployee = employeeRepository.save(employee);
+			return saveEmployee;
+		}catch(IllegalArgumentException e) {
+			throw new BusinessException("602"," Given employee is null, please "+e.getMessage());
+		}catch(Exception e) {
+			throw new BusinessException("603", "Something went wrong.. "+ e.getMessage());
+		}
+		
 	}
 	@Override
 	public List<Employee> saveAllEmployee(List<Employee> employee) {
@@ -29,15 +41,29 @@ public class EmployeeServiceImp implements EmployeeService{
 	
 	@Override
 	public List<Employee> getAllEmployee() {
-		// TODO Auto-generated method stub
-		return employeeRepository.findAll();
+		List<Employee> empList = null;
+		try {
+			empList = employeeRepository.findAll();			
+		}catch(Exception e) {
+			throw new BusinessException("605","Something went wrong "+e.getMessage());
+		}
+		if(empList.isEmpty()) {
+			throw new BusinessException("604", "List is empty");
+		}
+		return empList;
 	}
 
 	@Override
 	public Employee getEmployeeById(int id) {
 		// TODO Auto-generated method stub
-		return employeeRepository.findEmployeeById(id)
-				.orElseThrow(() -> new EmployeeNotFountException("Employee with id "+id+ "not found"));
+		try {
+			Employee employee = employeeRepository.findEmployeeById(id).get();
+			return employee;
+		}catch(IllegalArgumentException e) {
+			throw new BusinessException("606", "Given employee id is null, please send some id "+e.getMessage());
+		}catch(NoSuchElementException e) {
+			throw new BusinessException("607", "Given employee Id is not exist "+e.getMessage());
+		}
 	}
 	@Override
 	public Employee updateEmployee(Employee employee) {
@@ -47,9 +73,11 @@ public class EmployeeServiceImp implements EmployeeService{
 	@Override
 	public void deleteEmployee(int id) {
 		// TODO Auto-generated method stub
-		Employee employee = employeeRepository.findById(id)
-				.orElseThrow(() -> new EmployeeNotFountException("Employee with id "+id+"Not Found"));
-		 employeeRepository.delete(employee);
+		try {
+			employeeRepository.deleteById(id);
+		}catch(IllegalArgumentException e) {
+			throw new BusinessException("608", "Given employee is null "+e.getMessage());
+		}
 	}
 	@Override
 	public List<Employee> getEmployeeByName(String name) {
@@ -83,8 +111,7 @@ public class EmployeeServiceImp implements EmployeeService{
 		// TODO Auto-generated method stub
 		 num = num - 1;
 		 List<Employee> employee = employeeRepository.findAllEmployees();
-		 Employee emp = employee.stream().sorted((a,b) -> Double.compare(b.getSalary(), a.getSalary())).skip(num).findFirst().get();
-		 
+		 Employee emp = employee.stream().sorted((a,b) -> Double.compare(b.getSalary(), a.getSalary())).skip(num).findFirst().get();	 
 		return Optional.ofNullable(emp);
 	}
 
