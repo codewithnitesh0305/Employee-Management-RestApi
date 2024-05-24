@@ -33,16 +33,8 @@ public class HomeController {
 	 //Insert Single Employee Data
 	 @PostMapping("/employees")
 	 public ResponseEntity<?> addEmployee(@RequestBody Employee employee){ 
-		 try {
 			 Employee addEmployee = employeeServiceImp.saveEmployee(employee); 
 			return new ResponseEntity<Employee>(addEmployee,HttpStatus.CREATED); 
-		 }catch(BusinessException e) {
-			ControllerException controllerException = new ControllerException(e.getStatusCode(),e.getStatusMessage()) ;
-			return new ResponseEntity<ControllerException>(controllerException, HttpStatus.BAD_REQUEST);
-		 }catch(Exception e) {
-			 ControllerException controllerException = new ControllerException("611","Something went wrong in controller") ;
-			return new ResponseEntity<ControllerException>(controllerException, HttpStatus.BAD_REQUEST);
-		 }
 		
 	 }
 	 
@@ -66,17 +58,10 @@ public class HomeController {
 	
 	//Retrieve Employee Data By Id
 	@GetMapping("/employees/{id}")
-	public ResponseEntity<?> getEmployeeById(@PathVariable int id){
-		try {
+	public ResponseEntity<Employee> getEmployeeById(@PathVariable int id){
 		Employee employee = employeeServiceImp.getEmployeeById(id);
 		return new ResponseEntity<Employee>(employee,HttpStatus.FOUND);
-		}catch(BusinessException e) {
-			 ControllerException controllerException = new ControllerException(e.getStatusCode(),e.getStatusMessage()) ;
-			return new ResponseEntity<ControllerException>(controllerException, HttpStatus.BAD_REQUEST);
-		}catch(Exception e) {
-			 ControllerException controllerException = new ControllerException("612","Something went wrong in controller") ;
-			return new ResponseEntity<ControllerException>(controllerException, HttpStatus.BAD_REQUEST);
-		}
+		
 	}
 	
 	//Update Employee Details By Id

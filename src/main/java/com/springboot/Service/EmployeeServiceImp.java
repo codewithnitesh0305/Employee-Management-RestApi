@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.springboot.CustomeException.BusinessException;
+import com.springboot.CustomeException.EmptyInputException;
 import com.springboot.Entity.Employee;
 import com.springboot.Exception.EmployeeNotFountException;
 import com.springboot.Repository.EmployeeRepository;
@@ -19,18 +20,19 @@ public class EmployeeServiceImp implements EmployeeService{
 	
 	@Override
 	public Employee saveEmployee(Employee employee) {
-		
-			if(employee.getName().isEmpty() || employee.getName().length() == 0 || employee.getAge().isEmpty() || employee.getAge().length() == 0 ||  employee.getCity().length() == 0 || employee.getCity().isEmpty() ) {
-				throw new BusinessException("601", "Input field is empty");
-			}
-		try {
+		if (employee.getName().isEmpty() || employee.getName().length() == 0 || employee.getAge().isEmpty()
+				|| employee.getAge().length() == 0 || employee.getCity().length() == 0
+				|| employee.getCity().isEmpty()) {
+			throw new EmptyInputException("601", "Input field is empty");
+		}
+//		try {
 			Employee saveEmployee = employeeRepository.save(employee);
 			return saveEmployee;
-		}catch(IllegalArgumentException e) {
-			throw new BusinessException("602"," Given employee is null, please "+e.getMessage());
-		}catch(Exception e) {
-			throw new BusinessException("603", "Something went wrong.. "+ e.getMessage());
-		}
+//		} catch (IllegalArgumentException e) {
+//			throw new BusinessException("602", " Given employee is null, please " + e.getMessage());
+//		} catch (Exception e) {
+//			throw new BusinessException("603", "Something went wrong.. " + e.getMessage());
+//		}
 		
 	}
 	@Override
@@ -56,14 +58,9 @@ public class EmployeeServiceImp implements EmployeeService{
 	@Override
 	public Employee getEmployeeById(int id) {
 		// TODO Auto-generated method stub
-		try {
 			Employee employee = employeeRepository.findEmployeeById(id).get();
 			return employee;
-		}catch(IllegalArgumentException e) {
-			throw new BusinessException("606", "Given employee id is null, please send some id "+e.getMessage());
-		}catch(NoSuchElementException e) {
-			throw new BusinessException("607", "Given employee Id is not exist "+e.getMessage());
-		}
+		
 	}
 	@Override
 	public Employee updateEmployee(Employee employee) {
